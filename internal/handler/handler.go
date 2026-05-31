@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"lesson22/internal/db"
 	"log"
 	"net/http"
 	"text/template"
@@ -15,7 +16,8 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err)
 		return
 	}
-	if err = tmpl.Execute(w, ""); err != nil {
+	clients := db.SelectAllClients()
+	if err = tmpl.Execute(w, clients); err != nil {
 		log.Println(err)
 		fmt.Fprintln(w, err)
 		return
@@ -29,7 +31,8 @@ func TasksHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err)
 		return
 	}
-	if err = tmpl.Execute(w, ""); err != nil {
+	tasks := db.SelectAllTasks()
+	if err = tmpl.Execute(w, tasks); err != nil {
 		log.Println(err)
 		fmt.Fprintln(w, err)
 		return
@@ -43,7 +46,9 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err)
 		return
 	}
-	if err = tmpl.Execute(w, ""); err != nil {
+	clients := db.SelectAllClients()
+
+	if err = tmpl.Execute(w, clients); err != nil {
 		log.Println(err)
 		fmt.Fprintln(w, err)
 		return

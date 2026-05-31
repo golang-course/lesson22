@@ -47,5 +47,35 @@ func SelectAllClients() []Client {
 }
 
 func SelectAllTasks() []Task {
+	db, err := sql.Open("sqlite", "lesson22.db")
+	if err != nil {
+		log.Println(err)
+		return []Task{}
+	}
+	defer db.Close()
 
+	err = db.Ping()
+	if err != nil {
+		log.Println("ping db:", err)
+	}
+
+	rows, err := db.Query("SELECT * FROM tasks")
+	if err != nil {
+		log.Println(err)
+		return []Task{}
+	}
+
+	defer rows.Close()
+	tasks := []Task{}
+
+	for rows.Next() {
+		ph := Task{}
+		err := rows.Scan(&ph.Id, &ph.ClientId, &ph.Text, &ph.Created, &ph.Answer, &ph.Done)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		tasks = append(tasks, ph)
+	}
+	return tasks
 }
