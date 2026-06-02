@@ -100,5 +100,4 @@ func CreateNewTask(newTask Task) error {
 		return err
 	}
 	return nil
-
 }
