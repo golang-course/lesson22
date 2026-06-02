@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"lesson22/internal/db"
 	"log"
@@ -86,5 +87,33 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AskTaskHandler(w http.ResponseWriter, r *http.Request) {
-
+	if r.Method == http.MethodGet {
+		queryParams := r.URL.Query()
+		clientId := queryParams.Get("id")
+		IntClientId, err := strconv.Atoi(clientId)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		tasks := db.SelectAllTasks()
+		type Task struct {
+			Id   int
+			Text string
+		}
+		taskForClient := Task{}
+		for _, v := range tasks {
+			if v.Id == IntClientId && v.Done == 0 {
+				taskForClient.Id = v.Id
+				taskForClient.Text = v.Text
+				break
+			}
+		}
+		w.Header().Set("Content-Type", "application/json")
+		res, err := json.Marshal(taskForClient)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.Write(res)
+	}
 }
