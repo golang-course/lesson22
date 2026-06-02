@@ -295,7 +295,7 @@
                         >
                         <option value="" disabled selected>— Выберите клиента —</option>
                         {{range .}}
-                        <option value="101">{{.Id}}</option>
+                        <option value={{.Id}}>{{.Id}} - {{.Name}}</option>
                         {{end}}
                     </select>
                 </div>

@@ -5,7 +5,9 @@ import (
 	"lesson22/internal/db"
 	"log"
 	"net/http"
+	"strconv"
 	"text/template"
+	"time"
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +57,28 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else if r.Method == http.MethodPost {
-		log.Println("POST!!!!!")
+		id := r.FormValue("clientId")
+		idInt, err := strconv.Atoi(id)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		text := r.FormValue("text")
+		newTask := db.Task{
+			ClientId: idInt,
+			Text:     text,
+			Created:  time.Now().Format("02 Jan 2006"),
+			Done:     0,
+		}
+		err = db.CreateNewTask(newTask)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/tasks", http.StatusFound)
+
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}

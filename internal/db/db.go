@@ -85,3 +85,20 @@ func SelectAllTasks() []Task {
 	}
 	return tasks
 }
+
+func CreateNewTask(newTask Task) error {
+	db, err := sql.Open("sqlite", "lesson22.db")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer db.Close()
+
+	_, err = db.Exec("INSERT INTO tasks (clientId, text, created, done) VALUES ($1, $2, $3, $4)", newTask.ClientId, newTask.Text, newTask.Created, newTask.Done)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+
+}
