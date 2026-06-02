@@ -70,10 +70,16 @@ func SelectAllTasks() []Task {
 
 	for rows.Next() {
 		ph := Task{}
-		err := rows.Scan(&ph.Id, &ph.ClientId, &ph.Text, &ph.Created, &ph.Answer, &ph.Done)
+		var TaskAnswer sql.NullString
+		err := rows.Scan(&ph.Id, &ph.ClientId, &ph.Text, &ph.Created, &TaskAnswer, &ph.Done)
 		if err != nil {
 			log.Println(err)
 			continue
+		}
+		if TaskAnswer.Valid {
+			ph.Answer = TaskAnswer.String
+		} else {
+			ph.Answer = ""
 		}
 		tasks = append(tasks, ph)
 	}
