@@ -97,8 +97,8 @@ func AskTaskHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		tasks := db.SelectAllTasks()
 		type Task struct {
-			Id   int
-			Text string
+			Id   int    //0
+			Text string //""
 		}
 		taskForClient := Task{}
 		for _, v := range tasks {
@@ -115,5 +115,25 @@ func AskTaskHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Write(res)
+	} else if r.Method == http.MethodPost {
+		type TaskAnswer struct {
+			Id     int
+			Status string
+			Answer string
+		}
+		var clientTaskAnswer TaskAnswer
+		err := json.NewDecoder(r.Body).Decode(&clientTaskAnswer)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if clientTaskAnswer.Status == "none" {
+			//функция обновляющая значения в таблице
+		}
+		//функция обновляющая значения в таблице
+
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
