@@ -40,18 +40,24 @@ func TasksHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("templates/create-task.html")
-	if err != nil {
-		log.Println(err)
-		fmt.Fprintln(w, err)
-		return
-	}
-	clients := db.SelectAllClients()
+	if r.Method == http.MethodGet {
+		tmpl, err := template.ParseFiles("templates/create-task.html")
+		if err != nil {
+			log.Println(err)
+			fmt.Fprintln(w, err)
+			return
+		}
+		clients := db.SelectAllClients()
 
-	if err = tmpl.Execute(w, clients); err != nil {
-		log.Println(err)
-		fmt.Fprintln(w, err)
-		return
+		if err = tmpl.Execute(w, clients); err != nil {
+			log.Println(err)
+			fmt.Fprintln(w, err)
+			return
+		}
+	} else if r.Method == http.MethodPost {
+		log.Println("POST!!!!!")
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 
 }
