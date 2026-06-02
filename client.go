@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os/exec"
 	"time"
@@ -34,13 +35,11 @@ func executeTask(command string, args ...string) (string, error) {
 func askForTasks(id int) (Task, error) {
 	resp, err := http.Get(fmt.Sprintf("http://localhost:8080/ask-task?id=%d", id))
 	if err != nil {
-		fmt.Println(err)
 		return Task{}, err
 	}
 	var myTask Task
 	err = json.NewDecoder(resp.Body).Decode(&myTask)
 	if err != nil {
-		fmt.Println(err)
 		return Task{}, err
 	}
 	return myTask, nil
@@ -80,6 +79,10 @@ func sendAnswerToServer(result ExecutionResult) error {
 func main() {
 	task, err := askForTasks(id)
 	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if task.Id == 0 {
 		return
 	}
 
@@ -90,11 +93,17 @@ func main() {
 	if err != nil {
 		result.Status = "none"
 		result.Answer = err.Error()
-		//выполнить функцию отправки ответа на сервер
+		if err = sendAnswerToServer(result); err != nil {
+			fmt.Println(err)
+			return
+		}
 		return
 	}
 	result.Status = "ok"
 	result.Answer = answer
-	//выполнить функцию отправки ответа на сервер
-
+	err = sendAnswerToServer(result)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }

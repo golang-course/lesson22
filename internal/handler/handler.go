@@ -86,6 +86,5 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AskTaskHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("ask-task"))
 
 }
