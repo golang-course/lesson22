@@ -15,3 +15,8 @@ type Task struct {
 	Answer   string
 	Done     int
 }
+type TaskAnswer struct {
+	Id     int
+	Status string
+	Answer string
+}

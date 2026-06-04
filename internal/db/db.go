@@ -101,3 +101,27 @@ func CreateNewTask(newTask Task) error {
 	}
 	return nil
 }
+
+func UpdateTask(clientAnswer TaskAnswer) error {
+	db, err := sql.Open("sqlite", "lesson22.db")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer db.Close()
+
+	var statusCode int
+	switch clientAnswer.Status {
+	case "ok":
+		statusCode = 1
+	case "none":
+		statusCode = 2
+	}
+
+	_, err = db.Exec(`UPDATE tasks SET (answer=$1, done=$2) WHERE id=$3`, clientAnswer.Answer, statusCode, clientAnswer.Id)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+}
