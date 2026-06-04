@@ -120,7 +120,7 @@ func UpdateTask(clientAnswer TaskAnswer) error {
 		statusCode = 2
 	}
 
-	_, err = db.Exec(`UPDATE tasks SET (answer=$1, done=$2) WHERE id=$3`, clientAnswer.Answer, statusCode, clientAnswer.Id)
+	_, err = db.Exec("UPDATE tasks SET answer = $1, done = $2 WHERE id = $3;", clientAnswer.Answer, statusCode, clientAnswer.Id)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -135,7 +135,7 @@ func InserNewClient(clientId int) error {
 	}
 	defer db.Close()
 
-	_, err = db.Exec(`INSERT INTO clients (id, name, created, online) VALUES ($1, $2, $3, $4)`, clientId, fmt.Sprintf("Client-%d"), time.Now().Format("02 Jan 2006"), time.Now().Format("02 Jan 2006"))
+	_, err = db.Exec(`INSERT INTO clients (id, name, created, online) VALUES ($1, $2, $3, $4)`, clientId, fmt.Sprintf("Client-%d", clientId), time.Now().Format("02 Jan 2006"), time.Now().Format("02 Jan 2006"))
 	if err != nil {
 		log.Println(err)
 		return err
