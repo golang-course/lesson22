@@ -2,7 +2,9 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"time"
 
 	_ "modernc.org/sqlite"
 )
@@ -119,6 +121,21 @@ func UpdateTask(clientAnswer TaskAnswer) error {
 	}
 
 	_, err = db.Exec(`UPDATE tasks SET (answer=$1, done=$2) WHERE id=$3`, clientAnswer.Answer, statusCode, clientAnswer.Id)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+}
+func InserNewClient(clientId int) error {
+	db, err := sql.Open("sqlite", "lesson22.db")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer db.Close()
+
+	_, err = db.Exec(`INSERT INTO clients (id, name, created, online) VALUES ($1, $2, $3, $4)`, clientId, fmt.Sprintf("Client-%d"), time.Now().Format("02 Jan 2006"), time.Now().Format("02 Jan 2006"))
 	if err != nil {
 		log.Println(err)
 		return err

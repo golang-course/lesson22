@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"lesson22/internal/db"
+	"lesson22/internal/service"
 	"log"
 	"net/http"
 	"strconv"
@@ -95,6 +96,15 @@ func AskTaskHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 		}
+		isExists := service.CheckClientById(IntClientId)
+		if !isExists {
+			err = db.InserNewClient(IntClientId)
+			if err != nil {
+				log.Println(err)
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+		}
+
 		tasks := db.SelectAllTasks()
 		type Task struct {
 			Id   int    //0
